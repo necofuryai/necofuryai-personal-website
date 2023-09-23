@@ -1,1 +1,1 @@
-# necofuryai Personal Website | Astro framework Astrofy Template developed by Manuel Ernesto
+# necofuryai Personal Website | Powered by Atsro with Astrofy Template
