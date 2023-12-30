@@ -23,9 +23,6 @@ jobs:
           fetch-depth: 0
 
       - name: Approve PR
-        if: env.ONLY_README == 'yes'
         run: gh pr review "$PR_URL" --approve
-
       - name: Enable auto-merge
-        if: env.ONLY_README == 'yes'
         run: gh pr merge --merge --auto "$PR_URL"
