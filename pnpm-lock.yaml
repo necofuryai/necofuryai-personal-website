@@ -29,6 +29,9 @@ importers:
       dayjs:
         specifier: ^1.11.9
         version: 1.11.9
+      remark-breaks:
+        specifier: ^4.0.0
+        version: 4.0.0
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
@@ -603,8 +606,8 @@ packages:
     resolution: {integrity: sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw==}
     engines: {node: '>=14.16'}
 
-  caniuse-lite@1.0.30001564:
-    resolution: {integrity: sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==}
+  caniuse-lite@1.0.30001663:
+    resolution: {integrity: sha512-o9C3X27GLKbLeTYZ6HBOLU1tsAcBZsLis28wrVzddShCS16RujjHp9GDHKZqrB3meE0YjhawvMFsGb/igqiPzA==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -1261,6 +1264,9 @@ packages:
   mdast-util-mdxjs-esm@2.0.1:
     resolution: {integrity: sha512-EcmOpxsZ96CvlP03NghtH1EsLtr0n9Tm4lPUJUBccV9RwUOneqSycg19n5HGzCf+10LozMRSObtVr3ee1WoHtg==}
 
+  mdast-util-newline-to-break@2.0.0:
+    resolution: {integrity: sha512-MbgeFca0hLYIEx/2zGsszCSEJJ1JSCdiY5xQxRcLDDGa8EPvlLPupJ4DSajbMPAnC0je8jfb9TiUATnxxrHUog==}
+
   mdast-util-phrasing@4.0.0:
     resolution: {integrity: sha512-xadSsJayQIucJ9n053dfQwVu1kuXg7jCTdYsMK8rqzKZh52nLfSH/k0sAxE0u+pj/zKZX+o5wB+ML5mRayOxFA==}
 
@@ -1680,6 +1686,9 @@ packages:
 
   rehype@13.0.1:
     resolution: {integrity: sha512-AcSLS2mItY+0fYu9xKxOu1LhUZeBZZBx8//5HKzF+0XP+eP8+6a5MXn2+DW2kfXR6Dtp1FEXMVrjyKAcvcU8vg==}
+
+  remark-breaks@4.0.0:
+    resolution: {integrity: sha512-IjEjJOkH4FuJvHZVIW0QCDWxcG96kCq7An/KVH2NfJe6rKZU2AsHeB3OEjPNRxi4QC34Xdx7I2KGYn6IpT7gxQ==}
 
   remark-gfm@4.0.0:
     resolution: {integrity: sha512-U92vJgBPkbw4Zfu/IiW2oTZLSL3Zpv+uI7My2eq8JxKgqraFdU8YUGicEJCEgSbeaG+QDFqIcwwfMTOEelPxuA==}
@@ -2718,7 +2727,7 @@ snapshots:
   autoprefixer@10.4.16(postcss@8.4.32):
     dependencies:
       browserslist: 4.21.10
-      caniuse-lite: 1.0.30001564
+      caniuse-lite: 1.0.30001663
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2771,7 +2780,7 @@ snapshots:
 
   browserslist@4.21.10:
     dependencies:
-      caniuse-lite: 1.0.30001564
+      caniuse-lite: 1.0.30001663
       electron-to-chromium: 1.4.496
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.10)
@@ -2790,7 +2799,7 @@ snapshots:
 
   camelcase@7.0.1: {}
 
-  caniuse-lite@1.0.30001564: {}
+  caniuse-lite@1.0.30001663: {}
 
   ccount@2.0.1: {}
 
@@ -3551,6 +3560,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  mdast-util-newline-to-break@2.0.0:
+    dependencies:
+      '@types/mdast': 4.0.0
+      mdast-util-find-and-replace: 3.0.0
+
   mdast-util-phrasing@4.0.0:
     dependencies:
       '@types/mdast': 4.0.0
@@ -4040,8 +4054,9 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.32):
     dependencies:
       lilconfig: 3.0.0
-      postcss: 8.4.32
       yaml: 2.3.4
+    optionalDependencies:
+      postcss: 8.4.32
 
   postcss-nested@6.0.1(postcss@8.4.32):
     dependencies:
@@ -4158,6 +4173,12 @@ snapshots:
       '@types/hast': 3.0.0
       rehype-parse: 9.0.0
       rehype-stringify: 10.0.0
+      unified: 11.0.4
+
+  remark-breaks@4.0.0:
+    dependencies:
+      '@types/mdast': 4.0.0
+      mdast-util-newline-to-break: 2.0.0
       unified: 11.0.4
 
   remark-gfm@4.0.0:
@@ -4635,7 +4656,7 @@ snapshots:
       fsevents: 2.3.3
 
   vitefu@0.2.5(vite@5.0.5):
-    dependencies:
+    optionalDependencies:
       vite: 5.0.5
 
   web-namespaces@2.0.1: {}
