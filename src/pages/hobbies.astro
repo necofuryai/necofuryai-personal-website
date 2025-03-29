@@ -9,16 +9,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </div>
 
   <div>
-    <div class="text-3xl w-full font-bold mb-2">My Playlist</div>
+    <div class="text-3xl w-full font-bold mb-2">My Playlists</div>
   </div>
 
-  <iframe allow="autoplay *; encrypted-media *;" height="450" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/playlist/from-about-00s-to-20s-best-anime-songs-for-pro/pl.u-gxblk30u5RvoRr"></iframe>
-
-  <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Apple Music Replay</div>
+  <div class="flex flex-col lg:flex-row gap-4">
+    <div class="flex-1">
+      <iframe allow="autoplay *; encrypted-media *;" height="450" class="w-full" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/playlist/from-about-00s-to-20s-best-anime-songs-for-pro/pl.u-gxblk30u5RvoRr"></iframe>
+    </div>
+    <div class="flex-1">
+      <iframe allow="autoplay *; encrypted-media *;" height="450" class="w-full" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/playlist/%E3%83%AA%E3%83%97%E3%83%AC%E3%82%A4-2025%E5%B9%B4/pl.rp-55w5t6NGXNj"></iframe>
+    </div>
   </div>
-  
-  <iframe allow="autoplay *; encrypted-media *;" height="450" style="width:100%;max-width:660px;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/playlist/%E3%83%AA%E3%83%97%E3%83%AC%E3%82%A4-2025%E5%B9%B4/pl.rp-55w5t6NGXNj"></iframe>
   
   <!-- <HorizontalCard
     title="Service 1"
