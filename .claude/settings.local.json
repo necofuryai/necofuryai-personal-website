@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Agent(*)",
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "LS(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(domain:github.com)",
+      "WebSearch(*)"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": false
+}
