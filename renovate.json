@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranches": ["develop"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 10am on Monday"],
+  "prConcurrentLimit": 10,
+  "reviewers": ["necofuryai"],
+  "labels": ["dependencies", "automated"],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "dependencyDashboard": true,
+  "platformAutomerge": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "postUpdateOptions": ["pnpmDedupe"],
+  "packageRules": [
+    {
+      "description": "Automerge patch and minor updates for npm packages",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group Astro ecosystem packages together",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["astro", "@astrojs/*"],
+      "groupName": "astro-ecosystem",
+      "groupSlug": "astro-ecosystem"
+    },
+    {
+      "description": "Group Tailwind ecosystem packages together",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*", "daisyui"],
+      "groupName": "tailwind-ecosystem",
+      "groupSlug": "tailwind-ecosystem"
+    },
+    {
+      "description": "Use chore(deps-dev) scope for devDependencies",
+      "matchDepTypes": ["devDependencies"],
+      "semanticCommitScope": "deps-dev"
+    },
+    {
+      "description": "GitHub Actions: separate labels, scope, grouping, and automerge",
+      "matchManagers": ["github-actions"],
+      "labels": ["dependencies", "github-actions", "automated"],
+      "semanticCommitScope": "actions",
+      "groupName": "github-actions-all",
+      "groupSlug": "github-actions-all",
+      "automerge": true,
+      "automergeType": "pr",
+      "matchUpdateTypes": ["patch", "minor", "digest"]
+    },
+    {
+      "description": "Do not automerge major GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}
