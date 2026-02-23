@@ -90,6 +90,7 @@ necofuryai-personal-website/
 │   └── lib/                 # Utility functions & helpers
 ├── memory-bank/              # Project documentation & context
 ├── astro.config.mjs         # Astro configuration
+├── renovate.json            # Renovate dependency management config
 ├── tailwind.config.cjs      # Tailwind & DaisyUI config
 └── tsconfig.json            # TypeScript configuration
 ```
@@ -125,6 +126,11 @@ necofuryai-personal-website/
 ### Code Quality
 - TypeScript strict mode for better code quality
 - Claude Code AI-assisted development (`.claude/` configuration)
+
+### Dependency Management
+- **Renovate**: Automated dependency updates with native pnpm support
+- Ecosystem grouping (Astro, Tailwind) for coordinated updates
+- Auto-merge for patch/minor updates; manual review for major versions
 
 ## 🌐 Deployment
 
