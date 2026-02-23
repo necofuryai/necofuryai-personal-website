@@ -12,6 +12,11 @@
   "semanticCommitScope": "deps",
   "dependencyDashboard": true,
   "platformAutomerge": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "postUpdateOptions": ["pnpmDedupe"],
   "packageRules": [
     {
       "description": "Automerge patch and minor updates for npm packages",
@@ -23,14 +28,14 @@
     {
       "description": "Group Astro ecosystem packages together",
       "matchManagers": ["npm"],
-      "matchPackagePatterns": ["^astro$", "^@astrojs/"],
+      "matchPackageNames": ["astro", "@astrojs/*"],
       "groupName": "astro-ecosystem",
       "groupSlug": "astro-ecosystem"
     },
     {
       "description": "Group Tailwind ecosystem packages together",
       "matchManagers": ["npm"],
-      "matchPackagePatterns": ["^tailwindcss$", "^@tailwindcss/", "^daisyui$"],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*", "daisyui"],
       "groupName": "tailwind-ecosystem",
       "groupSlug": "tailwind-ecosystem"
     },
