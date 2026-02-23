@@ -24,5 +24,7 @@ pnpm-debug.log*
 README.md
 src/content/blog/
 
-# claude settings
-.claude/
+# claude code settings
+.claude/settings.local.json
+.claude/settings.local.json.example
+.claude/hooks/
