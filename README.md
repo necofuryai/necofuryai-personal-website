@@ -8,7 +8,7 @@
 
 ![Infrastructure](necofuryai-personal-website.png)
 
-> A modern, type-safe personal portfolio website built with Astro 4.0 and cutting-edge web technologies. Features blazing-fast performance, responsive design, and developer-friendly architecture.
+> A modern, type-safe personal portfolio website built with Astro 5 and cutting-edge web technologies. Features blazing-fast performance, responsive design, and developer-friendly architecture.
 
 ## 🙏 Template Credits
 
@@ -53,7 +53,7 @@ Open [http://localhost:4321](http://localhost:4321) in your browser to view the 
 ## 🏗 Technical Architecture
 
 ### Core Technologies
-- **🚀 Astro 4.0.2**: Modern meta-framework with islands architecture
+- **🚀 Astro 5**: Modern meta-framework with islands architecture
 - **📘 TypeScript**: Full type safety with strict null checks
 - **🎨 Tailwind CSS**: Utility-first CSS framework
 - **🧩 DaisyUI**: Component library for consistent UI patterns
@@ -123,9 +123,8 @@ necofuryai-personal-website/
 - Zod schemas for content validation
 
 ### Code Quality
-- ESLint and Prettier configuration
-- Pre-commit hooks for code formatting
 - TypeScript strict mode for better code quality
+- Claude Code AI-assisted development (`.claude/` configuration)
 
 ## 🌐 Deployment
 
