@@ -23,3 +23,6 @@ pnpm-debug.log*
 
 README.md
 src/content/blog/
+
+# claude settings
+.claude/
