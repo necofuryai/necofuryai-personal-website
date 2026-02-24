@@ -86,12 +86,11 @@ necofuryai-personal-website/
 │   │   ├── PostLayout.astro # Blog post layout
 │   │   └── StoreItemLayout.astro # E-commerce item layout
 │   ├── pages/               # File-based routing
-│   ├── styles/              # Global CSS styles
+│   ├── styles/              # Tailwind & DaisyUI CSS entry
 │   └── lib/                 # Utility functions & helpers
 ├── memory-bank/              # Project documentation & context
 ├── astro.config.mjs         # Astro configuration
 ├── renovate.json            # Renovate dependency management config
-├── tailwind.config.cjs      # Tailwind & DaisyUI config
 └── tsconfig.json            # TypeScript configuration
 ```
 

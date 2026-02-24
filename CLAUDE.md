@@ -89,7 +89,7 @@ In `/src/content/`:
 - `trailingSlash: 'always'` enforced in `astro.config.mjs` — all internal links MUST end with `/`
 - Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
 - Cloudflare Pages requires `.node-version` (22) and `packageManager` field in `package.json`
-- **Version lock**: Stay on Tailwind CSS v3.x + DaisyUI v4.x (v4/v5 migration blocked, breaks build)
+- **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`
 
 ## Extended References
 

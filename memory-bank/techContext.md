@@ -9,7 +9,8 @@
 ## Development Setup
 - Node.js and pnpm are used for package management.
 - The project is configured with a `tsconfig.json` for TypeScript settings.
-- Tailwind CSS is configured via `tailwind.config.cjs`.
+- Tailwind CSS v4 is integrated through `@tailwindcss/vite`.
+- Tailwind CSS, DaisyUI, and typography plugin setup lives in `src/styles/global.css`.
 
 ## Technical Constraints
 - The website must be optimized for performance and fast loading times.
