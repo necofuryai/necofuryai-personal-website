@@ -28,7 +28,7 @@ importers:
         version: 4.12.24(postcss@8.5.8)
       dayjs:
         specifier: ^1.11.9
-        version: 1.11.9
+        version: 1.11.20
       remark-breaks:
         specifier: ^4.0.0
         version: 4.0.0
@@ -868,8 +868,8 @@ packages:
     resolution: {integrity: sha512-JYg9fhQHOfXyLadrBrEqCDM6D5dWCSSiM6eTNCRrBRzx/VlOCrLS8eDfIw9RVvs64v2mJdLooKXY8EwQzoszAA==}
     engines: {node: '>=16.9.0'}
 
-  dayjs@1.11.9:
-    resolution: {integrity: sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==}
+  dayjs@1.11.20:
+    resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -3010,7 +3010,7 @@ snapshots:
     transitivePeerDependencies:
       - postcss
 
-  dayjs@1.11.9: {}
+  dayjs@1.11.20: {}
 
   debug@4.4.3:
     dependencies:
