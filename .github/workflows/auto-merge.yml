@@ -2,7 +2,7 @@ name: auto-merge-readme
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
     types: [ opened ]
 
 permissions:
@@ -12,7 +12,11 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'necofuryai'
+    if: |
+      (github.event.pull_request.user.login == 'necofuryai' ||
+      startsWith(github.event.pull_request.user.login, 'renovate')) &&
+      contains(github.event.pull_request.labels.*.name, 'dependencies') &&
+      contains(github.event.pull_request.labels.*.name, 'automated')
     env:
       PR_URL: ${{github.event.pull_request.html_url}}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
