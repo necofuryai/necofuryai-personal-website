@@ -6,5 +6,6 @@ import tailwind from "@astrojs/tailwind";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://necofuryai.io',
+  trailingSlash: 'always',
   integrations: [mdx(), sitemap(), tailwind()]
 });
