@@ -44,6 +44,14 @@ AI運用4原則
 - `pnpm build` - Build for production
 - `pnpm preview` - Preview production build locally
 - `pnpm astro` - Run Astro CLI commands
+- If build fails with `ERR_MODULE_NOT_FOUND`: run `rm -rf node_modules && pnpm install`
+
+## Git Workflow
+
+- **Branching**: `develop` → PR to `main` (Cloudflare Pages deploys from `main`)
+- **Fork**: origin = `necofuryai/necofuryai-personal-website`, upstream = `manuelernestog/astrofy`
+- **PR creation**: Always use `gh pr create --repo necofuryai/necofuryai-personal-website` (default targets upstream)
+- **Dependency management**: Renovate (config in `renovate.json`), migrated from Dependabot
 
 ## Architecture Overview
 
@@ -75,6 +83,13 @@ In `/src/content/`:
 - DaisyUI classes for consistent theming
 - Responsive drawer nav (mobile) vs sidebar (desktop)
 - Theme switching via `ThemeSelector.astro`
+
+## SEO & Deployment Gotchas
+
+- `trailingSlash: 'always'` enforced in `astro.config.mjs` — all internal links MUST end with `/`
+- Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
+- Cloudflare Pages requires `.node-version` (22) and `packageManager` field in `package.json`
+- **Version lock**: Stay on Tailwind CSS v3.x + DaisyUI v4.x (v4/v5 migration blocked, breaks build)
 
 ## Extended References
 
