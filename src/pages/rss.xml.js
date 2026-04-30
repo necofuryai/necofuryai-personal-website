@@ -1,18 +1,20 @@
-// import rss from "@astrojs/rss";
-// import { SITE_TITLE, SITE_DESCRIPTION } from "../config";
-// import { getCollection } from "astro:content";
+import rss from "@astrojs/rss";
+import { getCollection } from "astro:content";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../config";
+import { hasContentEntries } from "../lib/content-files";
 
-// export async function get(context) {
-//   const blog = await getCollection("blog");
-//   return rss({
-//     title: SITE_TITLE,
-//     description: SITE_DESCRIPTION,
-//     site: import.meta.env.SITE,
-//     items: blog.map((post) => ({
-//       title: post.data.title,
-//       pubDate: post.data.pubDate,
-//       description: post.data.description,
-//       link: `/blog/${post.slug}/`,
-//     })),
-//   });
-// }
+export async function GET(context) {
+  const blog = hasContentEntries("src/content/blog") ? await getCollection("blog") : [];
+
+  return rss({
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    site: context.site,
+    items: blog.map((post) => ({
+      title: post.data.title,
+      pubDate: post.data.pubDate,
+      description: post.data.description,
+      link: `/blog/${post.id}/`,
+    })),
+  });
+}
