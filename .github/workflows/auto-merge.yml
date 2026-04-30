@@ -1,32 +1,29 @@
-name: auto-merge-readme
+name: Dependency Auto Merge
 
 on:
   pull_request:
     branches: [ develop ]
-    types: [ opened ]
+    types: [ opened, reopened, synchronize, labeled, ready_for_review ]
 
 permissions:
   pull-requests: write
   contents: write
 
 jobs:
-  auto-merge:
+  enable-auto-merge:
+    name: Enable Renovate auto-merge
     runs-on: ubuntu-latest
     if: |
-      (github.event.pull_request.user.login == 'necofuryai' ||
-      startsWith(github.event.pull_request.user.login, 'renovate')) &&
+      !github.event.pull_request.draft &&
+      startsWith(github.event.pull_request.user.login, 'renovate') &&
       contains(github.event.pull_request.labels.*.name, 'dependencies') &&
       contains(github.event.pull_request.labels.*.name, 'automated')
     env:
       PR_URL: ${{github.event.pull_request.html_url}}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout repository with preceding commits
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
       - name: Approve PR
         run: gh pr review "$PR_URL" --approve
+
       - name: Enable auto-merge
-        run: gh pr merge --merge --auto "$PR_URL"
+        run: gh pr merge --squash --auto "$PR_URL"

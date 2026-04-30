@@ -26,6 +26,13 @@
       "automergeType": "pr"
     },
     {
+      "description": "Require dashboard approval for major npm updates",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false
+    },
+    {
       "description": "Group Astro ecosystem packages together",
       "matchManagers": ["npm"],
       "matchPackageNames": ["astro", "@astrojs/*"],
@@ -38,6 +45,12 @@
       "matchPackageNames": ["tailwindcss", "@tailwindcss/*", "daisyui"],
       "groupName": "tailwind-ecosystem",
       "groupSlug": "tailwind-ecosystem"
+    },
+    {
+      "description": "Require manual review for visual styling packages",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*", "daisyui"],
+      "automerge": false
     },
     {
       "description": "Use chore(deps-dev) scope for devDependencies",

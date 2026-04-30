@@ -1,0 +1,75 @@
+name: Dependency Gate
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-smoke:
+    name: Build and smoke check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Start preview server
+        run: |
+          pnpm preview --host 127.0.0.1 --port 4321 > /tmp/astro-preview.log 2>&1 &
+          echo "$!" > /tmp/astro-preview.pid
+
+      - name: Smoke check primary routes
+        run: |
+          set -euo pipefail
+
+          ready=false
+          for _ in {1..30}; do
+            if curl --fail --silent --show-error http://127.0.0.1:4321/ > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$ready" != "true" ]; then
+            echo "::error::Astro preview server did not become ready"
+            exit 1
+          fi
+
+          routes=("/" "/cv/" "/projects/" "/hobbies/" "/pr/")
+          for route in "${routes[@]}"; do
+            curl --fail --silent --show-error "http://127.0.0.1:4321${route}" > /dev/null
+          done
+
+      - name: Show preview log on failure
+        if: failure()
+        run: cat /tmp/astro-preview.log || true
+
+      - name: Stop preview server
+        if: always()
+        run: |
+          if [ -f /tmp/astro-preview.pid ]; then
+            kill "$(cat /tmp/astro-preview.pid)" 2>/dev/null || true
+          fi

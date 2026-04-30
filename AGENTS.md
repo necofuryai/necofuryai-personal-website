@@ -3,7 +3,7 @@
 <language>Japanese</language>
 <character_code>UTF-8</character_code>
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 <law>
 AI運用4原則
