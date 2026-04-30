@@ -40,6 +40,8 @@ AI運用4原則
 
 ## Development Commands
 
+- `corepack enable` - Enable the pnpm version declared by `packageManager`
+- `pnpm install --frozen-lockfile` - Install dependencies without changing the lockfile
 - `pnpm dev` - Start development server (port 4321)
 - `pnpm build` - Build for production
 - `pnpm preview` - Preview production build locally
@@ -52,11 +54,16 @@ AI運用4原則
 - **Fork**: origin = `necofuryai/necofuryai-personal-website`, upstream = `manuelernestog/astrofy`
 - **PR creation**: Always use `gh pr create --repo necofuryai/necofuryai-personal-website` (default targets upstream)
 - **Dependency management**: Renovate (config in `renovate.json`), migrated from Dependabot
+- **Dependency PR base**: Renovate PRs target `develop`
+- **Dependency gate**: Required check is `Build and smoke check`; it installs, builds, previews, and smoke-checks primary routes
+- **Merge method**: Use squash merge for PRs because merge commits are disabled on this repository
 
 ## Architecture Overview
 
 Astro-based personal website:
-- **Styling**: Tailwind CSS + DaisyUI component library
+- **Runtime**: Node.js 24 via `.node-version`, pnpm 10 via `packageManager`
+- **Framework**: Astro 6 static site
+- **Styling**: Tailwind CSS 4 + DaisyUI 5
 - **Content**: Astro Content Collections with Zod validation
 - **TypeScript**: Strict mode, path aliases (`@components/*`, `@layouts/*`)
 - **Deployment**: Cloudflare Pages
@@ -88,8 +95,16 @@ In `/src/content/`:
 
 - `trailingSlash: 'always'` enforced in `astro.config.mjs` — all internal links MUST end with `/`
 - Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
-- Cloudflare Pages requires `.node-version` (22) and `packageManager` field in `package.json`
+- Cloudflare Pages uses `.node-version` (`24`) and the `packageManager` field in `package.json`
 - **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`
+
+## Dependency Update Policy
+
+- Renovate is the only automated dependency updater; do not add `.github/dependabot.yml`.
+- Patch/minor dependency updates can auto-merge only after the required dependency gate succeeds.
+- Major npm updates require dependency dashboard approval and manual review.
+- Tailwind CSS, DaisyUI, and `@tailwindcss/*` updates require manual review even for patch/minor because rendering can change.
+- Keep the dependency gate aligned with production routes: `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`.
 
 ## Extended References
 

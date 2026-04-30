@@ -47,16 +47,10 @@
       "groupSlug": "tailwind-ecosystem"
     },
     {
-      "description": "Keep Tailwind CSS on v3 until the visual migration is reviewed",
+      "description": "Require manual review for visual styling packages",
       "matchManagers": ["npm"],
-      "matchPackageNames": ["tailwindcss"],
-      "allowedVersions": "<4.0.0"
-    },
-    {
-      "description": "Keep DaisyUI on v4 until the visual migration is reviewed",
-      "matchManagers": ["npm"],
-      "matchPackageNames": ["daisyui"],
-      "allowedVersions": "<5.0.0"
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*", "daisyui"],
+      "automerge": false
     },
     {
       "description": "Use chore(deps-dev) scope for devDependencies",
