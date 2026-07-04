@@ -1,0 +1,73 @@
+name: Production Smoke Check
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: production-smoke
+  cancel-in-progress: true # a newer push to main supersedes this check
+
+jobs:
+  smoke:
+    name: Production smoke check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for Cloudflare Pages deploy
+        run: sleep 180
+
+      - name: Check production routes
+        run: |
+          set -euo pipefail
+          routes=("/" "/cv/" "/projects/" "/hobbies/" "/pr/")
+          deadline=$((SECONDS + 420))
+          ok=false
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            all_good=true
+            for route in "${routes[@]}"; do
+              if ! curl --fail --silent --show-error --max-time 20 "https://necofuryai.io${route}" > /dev/null; then
+                all_good=false
+                echo "Route ${route} not healthy yet; retrying in 30s..."
+                break
+              fi
+            done
+            if [ "$all_good" = "true" ]; then
+              ok=true
+              break
+            fi
+            sleep 30
+          done
+          if [ "$ok" != "true" ]; then
+            echo "::error::Production smoke check failed for https://necofuryai.io"
+            exit 1
+          fi
+          echo "All production routes healthy."
+
+      - name: Open incident issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" \
+            --search 'Production smoke check failed in:title' \
+            --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Open incident issue #${existing} already exists; skipping."
+            exit 0
+          fi
+          {
+            echo "The post-deploy smoke check failed after pushing \`${GITHUB_SHA}\` to \`main\`."
+            echo ""
+            echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo ""
+            echo "**Recovery**: Cloudflare Dashboard -> Workers & Pages -> this project -> Deployments -> Instant Rollback to the previous production deployment. Then investigate the diff on \`main\`."
+          } > /tmp/issue-body.md
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Production smoke check failed ($(date -u +%Y-%m-%d), ${GITHUB_SHA::7})" \
+            --body-file /tmp/issue-body.md
