@@ -2,7 +2,7 @@ name: Dependency Gate
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
     types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
@@ -73,3 +73,65 @@ jobs:
           if [ -f /tmp/astro-preview.pid ]; then
             kill "$(cat /tmp/astro-preview.pid)" 2>/dev/null || true
           fi
+
+  vrt:
+    name: Visual regression test
+    runs-on: ubuntu-24.04 # pinned; must match vrt-update-baselines.yml
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run visual regression tests
+        run: pnpm exec playwright test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-${{ github.event.pull_request.number }}
+          path: playwright-report/
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse CI (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true # advisory: never blocks automerge
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.1 autorun

@@ -17,13 +17,16 @@
     "automerge": true
   },
   "postUpdateOptions": ["pnpmDedupe"],
+  "vulnerabilityAlerts": { "enabled": true },
+  "osvVulnerabilityAlerts": true,
   "packageRules": [
     {
       "description": "Automerge patch and minor updates for npm packages",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
-      "automergeType": "pr"
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days"
     },
     {
       "description": "Require dashboard approval for major npm updates",
@@ -53,6 +56,14 @@
       "automerge": false
     },
     {
+      "description": "Playwright: group and never automerge (VRT baselines must be regenerated)",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@playwright/test", "playwright", "playwright-core", "playwright-chromium"],
+      "groupName": "playwright",
+      "groupSlug": "playwright",
+      "automerge": false
+    },
+    {
       "description": "Use chore(deps-dev) scope for devDependencies",
       "matchDepTypes": ["devDependencies"],
       "semanticCommitScope": "deps-dev"
@@ -66,7 +77,8 @@
       "groupSlug": "github-actions-all",
       "automerge": true,
       "automergeType": "pr",
-      "matchUpdateTypes": ["patch", "minor", "digest"]
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "minimumReleaseAge": "3 days"
     },
     {
       "description": "Do not automerge major GitHub Actions updates",

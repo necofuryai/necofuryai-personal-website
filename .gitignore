@@ -29,3 +29,7 @@ src/content/blog/
 .claude/settings.local.json
 .claude/settings.local.json.example
 .claude/hooks/
+
+# Playwright
+test-results/
+playwright-report/
