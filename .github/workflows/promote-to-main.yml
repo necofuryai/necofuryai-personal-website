@@ -1,0 +1,93 @@
+name: Promote to Main
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # 15:00 JST Monday, after Renovate's morning wave
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: promote-to-main
+  cancel-in-progress: false
+
+env:
+  REPO: necofuryai/necofuryai-personal-website
+
+jobs:
+  promote:
+    name: Create promotion PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Generate App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Drift check (main must be a snapshot of develop)
+        run: |
+          set -euo pipefail
+          main_tree=$(git rev-parse 'origin/main^{tree}')
+          found=""
+          for c in $(git rev-list --max-count=500 origin/develop); do
+            if [ "$(git rev-parse "${c}^{tree}")" = "$main_tree" ]; then
+              found="$c"
+              break
+            fi
+          done
+          if [ -z "$found" ]; then
+            echo "::error::Drift detected: main's content does not match any of the last 500 develop commits. main has received commits not sourced from develop. Refusing to create a promotion PR; reconcile the branches manually."
+            exit 1
+          fi
+          echo "OK: main matches develop commit ${found}"
+
+      - name: Check whether there is anything to promote
+        id: diff
+        run: |
+          if git diff --quiet origin/main origin/develop; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "develop and main are content-identical; nothing to promote."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or reuse promotion PR and enable auto-merge
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          pr=$(gh pr list --repo "$REPO" --base main --head develop --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then
+            {
+              echo "Automated weekly promotion of develop to main."
+              echo ""
+              echo "- Merged by squash; the commit list may repeat commits already promoted in earlier releases (squash resets ancestry, not content). The **Files changed** tab is the source of truth."
+              echo "- Gated by required checks: Build and smoke check, Visual regression test."
+              echo "- Created by the Promote to Main workflow."
+            } > /tmp/pr-body.md
+            url=$(gh pr create --repo "$REPO" --base main --head develop \
+              --title "chore(release): promote develop to main ($(date -u +%Y-%m-%d))" \
+              --body-file /tmp/pr-body.md)
+            pr="${url##*/}"
+            echo "Created promotion PR #${pr}"
+          else
+            echo "Reusing open promotion PR #${pr}"
+          fi
+          automerge=$(gh pr view "$pr" --repo "$REPO" --json autoMergeRequest --jq '.autoMergeRequest // empty')
+          if [ -z "$automerge" ]; then
+            gh pr merge "$pr" --repo "$REPO" --squash --auto
+            echo "Auto-merge enabled for PR #${pr}"
+          else
+            echo "Auto-merge already enabled for PR #${pr}"
+          fi

@@ -1,0 +1,78 @@
+name: VRT Update Baselines
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'Branch to regenerate baselines on (also the PR target)'
+        required: false
+        default: 'develop'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vrt-update-baselines
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Regenerate VRT baselines
+    runs-on: ubuntu-24.04 # must stay identical to the vrt job in dependency-gate.yml
+    timeout-minutes: 20
+    steps:
+      - name: Generate App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Checkout base branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.base }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build
+        run: pnpm build
+
+      - name: Regenerate baselines
+        run: pnpm exec playwright test --update-snapshots
+
+      - name: Open baseline PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          BASE: ${{ inputs.base }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- tests/vrt)" ]; then
+            echo "Baselines unchanged; nothing to do."
+            exit 0
+          fi
+          branch="chore/vrt-baselines-${{ github.run_id }}"
+          git config user.name "necofuryai-release-bot[bot]"
+          git config user.email "necofuryai-release-bot[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add tests/vrt
+          git commit -m "test(vrt): update visual regression baselines"
+          git push origin "$branch"
+          gh pr create --repo necofuryai/necofuryai-personal-website \
+            --base "$BASE" --head "$branch" \
+            --title "test(vrt): update visual regression baselines" \
+            --body "Baselines regenerated on ubuntu-24.04 by the VRT Update Baselines workflow (run ${{ github.run_id }}), base: $BASE. Review the screenshot changes before merging."
