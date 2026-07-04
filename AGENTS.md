@@ -51,15 +51,15 @@ AI運用4原則
 ## Git Workflow
 
 - **Branching**: `develop` → PR to `main` (Cloudflare Pages deploys from `main`)
-- **Release automation**: The `Promote to Main` workflow (Mondays 15:00 JST cron + `workflow_dispatch`) opens a squash-only promotion PR from `develop` to `main`, authored by the `necofuryai-release-bot` GitHub App, and enables auto-merge
+- **Release automation**: The `Promote to Main` workflow (Mondays 15:00 JST cron + `workflow_dispatch`) opens a merge-commit promotion PR from `develop` to `main`, authored by the `necofuryai-release-bot` GitHub App, and enables auto-merge
 - **Drift check**: Promotion runs a tree-based drift check and fails loudly if `main` contains content not sourced from `develop`
-- **Required checks**: `main` requires `Build and smoke check` + `Visual regression test` with strict=false (squash promotions make strict=true deadlock); `develop` keeps strict=true
+- **Required checks**: `main` requires `Build and smoke check` + `Visual regression test` with strict=false (promotion PRs from a long-lived `develop` make strict=true deadlock); `develop` keeps strict=true
 - **Fork**: origin = `necofuryai/necofuryai-personal-website`, upstream = `manuelernestog/astrofy`
 - **PR creation**: Always use `gh pr create --repo necofuryai/necofuryai-personal-website` (default targets upstream)
 - **Dependency management**: Renovate (config in `renovate.json`), migrated from Dependabot
 - **Dependency PR base**: Renovate PRs target `develop`
 - **Dependency gate**: Required checks are `Build and smoke check` (installs, builds, previews, smoke-checks primary routes) and `Visual regression test`; `Lighthouse CI (advisory)` never blocks
-- **Merge method**: Use squash merge for PRs because merge commits are disabled on this repository
+- **Merge method**: Use squash merge for normal PRs (dependency, feature, docs); promotion PRs from `develop` to `main` are merged with merge commits (the repo allows both) because repeated squash promotions never advance the merge base and conflict on files like `pnpm-lock.yaml`
 
 ## Architecture Overview
 
@@ -113,7 +113,7 @@ In `/src/content/`:
 - VRT baselines are generated ONLY by the `VRT Update Baselines` workflow on ubuntu-24.04; never run `playwright test --update-snapshots` locally.
 - Lighthouse CI is advisory for now (tighten thresholds later).
 - Claude advisory review (`renovate-review.yml`) is optional and skips green when `CLAUDE_CODE_OAUTH_TOKEN` is absent.
-- Post-deploy `Production Smoke Check` runs on every push to `main`; recovery = Cloudflare Pages Instant Rollback.
+- Post-deploy `Production Smoke Check` runs on every push to `main` against the pages.dev project domain (the custom domain 403s datacenter IPs via bot protection); recovery = Cloudflare Pages Instant Rollback.
 - Known limitation: a Cloudflare build failure keeps serving the previous deployment; covered by Cloudflare's build-failure emails.
 
 ## Extended References

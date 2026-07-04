@@ -72,7 +72,7 @@ jobs:
             {
               echo "Automated weekly promotion of develop to main."
               echo ""
-              echo "- Merged by squash; the commit list may repeat commits already promoted in earlier releases (squash resets ancestry, not content). The **Files changed** tab is the source of truth."
+              echo "- Merged with a merge commit so the merge base advances on every release and repeated promotions stay conflict-free."
               echo "- Gated by required checks: Build and smoke check, Visual regression test."
               echo "- Created by the Promote to Main workflow."
             } > /tmp/pr-body.md
@@ -86,7 +86,7 @@ jobs:
           fi
           automerge=$(gh pr view "$pr" --repo "$REPO" --json autoMergeRequest --jq '.autoMergeRequest // empty')
           if [ -z "$automerge" ]; then
-            gh pr merge "$pr" --repo "$REPO" --squash --auto
+            gh pr merge "$pr" --repo "$REPO" --merge --auto
             echo "Auto-merge enabled for PR #${pr}"
           else
             echo "Auto-merge already enabled for PR #${pr}"

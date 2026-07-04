@@ -22,15 +22,21 @@ jobs:
         run: sleep 180
 
       - name: Check production routes
+        # The custom domain (necofuryai.io) sits behind the zone's bot
+        # protection, which 403s requests from datacenter IPs such as GitHub
+        # runners. The pages.dev project domain serves the same production
+        # deployment without that layer, so build/deploy breakage is still
+        # caught; DNS/WAF issues on the custom domain are out of scope here.
         run: |
           set -euo pipefail
+          base="https://necofuryai-personal-website.pages.dev"
           routes=("/" "/cv/" "/projects/" "/hobbies/" "/pr/")
           deadline=$((SECONDS + 420))
           ok=false
           while [ "$SECONDS" -lt "$deadline" ]; do
             all_good=true
             for route in "${routes[@]}"; do
-              if ! curl --fail --silent --show-error --max-time 20 "https://necofuryai.io${route}" > /dev/null; then
+              if ! curl --fail --silent --show-error --max-time 20 "${base}${route}" > /dev/null; then
                 all_good=false
                 echo "Route ${route} not healthy yet; retrying in 30s..."
                 break
@@ -43,7 +49,7 @@ jobs:
             sleep 30
           done
           if [ "$ok" != "true" ]; then
-            echo "::error::Production smoke check failed for https://necofuryai.io"
+            echo "::error::Production smoke check failed for ${base}"
             exit 1
           fi
           echo "All production routes healthy."
