@@ -12,6 +12,7 @@
   "semanticCommitScope": "deps",
   "dependencyDashboard": true,
   "platformAutomerge": true,
+  "automergeStrategy": "squash",
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
