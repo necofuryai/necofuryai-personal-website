@@ -1,3 +1,9 @@
+# Build-script allowlist in both formats: pnpm 10 reads
+# onlyBuiltDependencies, pnpm 11 reads allowBuilds (the old key was
+# removed in v11). Each version ignores the other's key.
 onlyBuiltDependencies:
   - esbuild
   - sharp
+allowBuilds:
+  esbuild: true
+  sharp: true
