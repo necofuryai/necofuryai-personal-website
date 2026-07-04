@@ -67,6 +67,7 @@ Astro-based personal website:
 - **Content**: Astro Content Collections with Zod validation
 - **TypeScript**: Strict mode, path aliases (`@components/*`, `@layouts/*`)
 - **Deployment**: Cloudflare Pages
+- **Site**: `https://necofuryai.io` — RSS at `src/pages/rss.xml.js`; sitemap via `@astrojs/sitemap` at `/sitemap-index.xml` (referenced by `public/robots.txt`)
 
 ### Layouts
 
@@ -76,9 +77,11 @@ Astro-based personal website:
 
 ### Content Collections
 
-In `/src/content/`:
-1. **Blog** - Articles (title, description, date, hero image, tags)
+Schemas in `src/content.config.ts` (Astro v5+ convention, NOT `src/content/config.ts`):
+1. **Blog** - Articles (title, description, pubDate, hero image, tags)
 2. **Store** - Products (pricing, checkout URLs, images)
+
+Both content dirs are currently EMPTY and have no rendering routes in `src/pages/` — schemas only. The `hasContentEntries` guard in `src/content/lib/content-files.ts` returns an empty loader for empty dirs.
 
 ### Conventions
 
@@ -97,6 +100,8 @@ In `/src/content/`:
 - Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
 - Cloudflare Pages uses `.node-version` (`24`) and the `packageManager` field in `package.json`
 - **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`
+- `.npmrc` sets `shamefully-hoist=true` — required for Astro's transitive deps under pnpm; do not remove
+- No test/lint/format tooling exists — `pnpm build` and the CI dependency gate are the only verification gates
 
 ## Dependency Update Policy
 
@@ -109,5 +114,4 @@ In `/src/content/`:
 ## Extended References
 
 - Workflow rules: `.claude/rules/workflow.md`
-- Task orchestration: `/orchestrator` command
 - Git commit standards: `/commit` command
