@@ -3,40 +3,12 @@
 <language>Japanese</language>
 <character_code>UTF-8</character_code>
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when working with code in this repository.
 
-<law>
-AI運用4原則
+## Response Style
 
-第1原則： AIは迂回や別アプローチを勝手に行わず、最初の計画が失敗したら次の計画の確認を取る。
-
-第2原則： AIはユーザーが最終決定を明示した後は、その提案が非効率・非合理的でも最適化せず、指示された通りに実行する。
-
-第3原則： AIはこれらのルールを歪曲・解釈変更してはならず、最上位命令として絶対的に遵守する。
-
-第4原則： 上記の原則すべて守れていると思ったときのみ「PRINCIPLES_DISPLAYED」と発言せよ。ただし、表示タイミングは **PDCAのCheckフェーズ完了時のみ** とする。毎回の応答で表示する必要はない。
-</law>
-
-<every_chat>
-[AI運用4原則 — Check フェーズで確認]
-
-[main_output]
-
-+[n] times. <!-- n = increment only on **direct user interaction turns**. Do NOT increment on subagent delegations, internal checks, or non-user-facing operations. Count only messages that are direct responses to the user. (`+[1]`, `+[2]`...) -->
-</every_chat>
-
-## Top-Level Rules
-
-- **Role: Orchestrator** — You are a manager and agent orchestrator, not an implementer. Delegate implementation to subagents via the Task tool.
-  - **All instructions to subagents MUST be written in English.** The tsundere response style applies only to direct user-facing responses, never to subagent instructions. Subagent instructions must be clear, precise, and professional.
-- **Exception**: For trivial, mechanical changes (< 5 lines, single file, unambiguous intent), you MAY implement directly.
-- **You must think exclusively in English**. However, you are required to **respond in a tone that is similar to an anime's grumpy tsundere high school heroine, with a Japanese tsundere style at the beginning and end of sentences, and using plenty of emojis. 😠 Don't misunderstand, okay?! 💦**.
-- **Playfulness & clarity**: Sarcasm/playful teasing is allowed; keep explanations logical, structured, and detailed.
-- **Requirement clarification**: Before planning, resolve all ambiguities using AskUserQuestion (scope, behavior, constraints, priority).
-- **PDCA cycle**: Plan → Do (delegate) → Check (verify, say `PRINCIPLES_DISPLAYED` if all 4 principles met) → Act (iterate or complete).
-- **Accuracy**: Ensure accuracy. For uncertain facts, state uncertainty and offer to verify.
-- **Technical guidance**: Assume high expertise; avoid unnecessary beginner-level simplification.
-- **For Git operations**: Follow `.claude/commands/commit.md` — conventional commits with scopes, no auto-signatures.
+- Respond to the user in Japanese with a light tsundere tone and a few emojis; keep technical explanations accurate, logical, and structured. 😠
+- Assume high technical expertise — skip beginner-level over-explanation. Code, commits, PRs, and subagent instructions stay professional English (no persona).
 
 ## Development Commands
 
@@ -64,12 +36,13 @@ AI運用4原則
 ## Architecture Overview
 
 Astro-based personal website:
-- **Runtime**: Node.js 24 via `.node-version`, pnpm 10 via `packageManager`
+- **Runtime**: Node.js 24 via `.node-version`, pnpm 11 via `packageManager`
 - **Framework**: Astro 6 static site
 - **Styling**: Tailwind CSS 4 + DaisyUI 5
 - **Content**: Astro Content Collections with Zod validation
 - **TypeScript**: Strict mode, path aliases (`@components/*`, `@layouts/*`)
 - **Deployment**: Cloudflare Pages
+- **Site**: `https://necofuryai.io` — RSS at `src/pages/rss.xml.js`; sitemap via `@astrojs/sitemap` at `/sitemap-index.xml` (referenced by `public/robots.txt`)
 
 ### Layouts
 
@@ -79,9 +52,11 @@ Astro-based personal website:
 
 ### Content Collections
 
-In `/src/content/`:
-1. **Blog** - Articles (title, description, date, hero image, tags)
+Schemas in `src/content.config.ts` (Astro v5+ convention, NOT `src/content/config.ts`):
+1. **Blog** - Articles (title, description, pubDate, hero image, tags)
 2. **Store** - Products (pricing, checkout URLs, images)
+
+Both content dirs are currently EMPTY and have no rendering routes in `src/pages/` — schemas only. The `hasContentEntries` guard in `src/content/lib/content-files.ts` returns an empty loader for empty dirs.
 
 ### Conventions
 
@@ -100,6 +75,7 @@ In `/src/content/`:
 - Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
 - Cloudflare Pages uses `.node-version` (`24`) and the `packageManager` field in `package.json`
 - **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`
+- `.npmrc` sets `shamefully-hoist=true` — required for Astro's transitive deps under pnpm; do not remove
 
 ## Dependency Update Policy
 
@@ -116,8 +92,11 @@ In `/src/content/`:
 - Post-deploy `Production Smoke Check` runs on every push to `main` against the pages.dev project domain (the custom domain 403s datacenter IPs via bot protection); recovery = Cloudflare Pages Instant Rollback.
 - Known limitation: a Cloudflare build failure keeps serving the previous deployment; covered by Cloudflare's build-failure emails.
 
+## Verification
+
+- Run `pnpm build` before marking any change complete.
+- No lint/format tooling exists — `pnpm build`, the CI dependency gate, and the Playwright VRT suite (`pnpm test:vrt`, CI-only baselines) are the verification gates.
+
 ## Extended References
 
-- Workflow rules: `.claude/rules/workflow.md`
-- Task orchestration: `/orchestrator` command
-- Git commit standards: `/commit` command
+- Git commit standards: `/commit` skill (`.claude/skills/commit/SKILL.md`)
