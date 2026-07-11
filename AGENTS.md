@@ -80,12 +80,11 @@ Both content dirs are currently EMPTY and have no rendering routes in `src/pages
 ## Dependency Update Policy
 
 - Renovate is the only automated dependency updater; do not add `.github/dependabot.yml`.
-- Patch/minor dependency updates can auto-merge only after the required dependency gate succeeds.
-- Major npm updates require dependency dashboard approval and manual review.
-- Tailwind CSS, DaisyUI, and `@tailwindcss/*` updates require manual review even for patch/minor because rendering can change.
+- All dependency updates automerge once the required dependency gate (build + smoke + VRT) succeeds; the gate is the review.
+- Major npm updates require dependency dashboard approval to create the PR, then automerge once the gate passes.
 - Keep the dependency gate aligned with production routes: `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`.
 - `minimumReleaseAge`: 7 days for npm patch/minor, 3 days for GitHub Actions; security fixes bypass schedule and release age via `vulnerabilityAlerts`/`osvVulnerabilityAlerts`.
-- The `playwright` group never automerges. Flow: dispatch `VRT Update Baselines` with base=<renovate branch>, review and merge the baseline PR, then manually squash-merge the Renovate PR.
+- The `playwright` group automerges when the gate passes. If VRT fails on a Playwright update: dispatch `VRT Update Baselines` with base=<renovate branch>, review and merge the baseline PR, then squash-merge the Renovate PR.
 - VRT baselines are generated ONLY by the `VRT Update Baselines` workflow on ubuntu-24.04; never run `playwright test --update-snapshots` locally.
 - Lighthouse CI is advisory for now (tighten thresholds later).
 - Claude advisory review (`renovate-review.yml`) is optional and skips green when `CLAUDE_CODE_OAUTH_TOKEN` is absent.

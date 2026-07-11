@@ -142,10 +142,9 @@ necofuryai-personal-website/
 ### Dependency Management
 - **Renovate** is the dependency update source of truth; Dependabot is intentionally not configured.
 - Dependency PRs target `develop`.
-- Patch and minor updates can auto-merge only after the required dependency gate passes.
-- Major updates stay manual through the Renovate dependency dashboard.
-- Tailwind CSS, DaisyUI, and `@tailwindcss/*` updates require manual review because they can affect rendering.
-- Playwright packages are grouped and never auto-merge; VRT baselines must be regenerated via the `VRT Update Baselines` workflow first.
+- All updates auto-merge once the required dependency gate passes; the gate is the review.
+- Major npm updates need dependency dashboard approval to create the PR, then auto-merge once the gate passes.
+- Playwright packages are grouped and auto-merge when the gate passes; if VRT fails, baselines are regenerated via the `VRT Update Baselines` workflow first.
 - `minimumReleaseAge` delays automerge (7 days for npm patch/minor, 3 days for GitHub Actions); security fixes bypass the schedule via vulnerability alerts.
 - The dependency gate installs with `pnpm install --frozen-lockfile`, runs `pnpm build`, starts `pnpm preview`, and smoke-checks `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`, plus a Playwright visual regression job and an advisory Lighthouse CI job.
 
