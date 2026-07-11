@@ -8,7 +8,7 @@
 
 ![Infrastructure](necofuryai-personal-website.png)
 
-> A modern, type-safe personal portfolio website built with Astro 6, Tailwind CSS 4, and DaisyUI 5. The site is optimized for static deployment on Cloudflare Pages and for low-risk dependency updates through Renovate.
+> A modern, type-safe personal portfolio website built with Astro 7, Tailwind CSS 4, and DaisyUI 5. The site is optimized for static deployment on Cloudflare Pages and for low-risk dependency updates through Renovate.
 
 ## 🙏 Template Credits
 
@@ -56,7 +56,7 @@ Open [http://localhost:4321](http://localhost:4321) in your browser to view the 
 ## 🏗 Technical Architecture
 
 ### Core Technologies
-- **🚀 Astro 6**: Modern meta-framework with static output and islands architecture
+- **🚀 Astro 7**: Modern meta-framework with static output and islands architecture
 - **📘 TypeScript**: Full type safety with strict null checks
 - **🎨 Tailwind CSS 4**: Utility-first CSS framework wired through `@tailwindcss/vite`
 - **🧩 DaisyUI 5**: Component library configured from the CSS entrypoint

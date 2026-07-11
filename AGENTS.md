@@ -37,7 +37,7 @@ This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when 
 
 Astro-based personal website:
 - **Runtime**: Node.js 24 via `.node-version`, pnpm 11 via `packageManager`
-- **Framework**: Astro 6 static site
+- **Framework**: Astro 7 static site (bundles Vite 8 / rolldown)
 - **Styling**: Tailwind CSS 4 + DaisyUI 5
 - **Content**: Astro Content Collections with Zod validation
 - **TypeScript**: Strict mode, path aliases (`@components/*`, `@layouts/*`)
@@ -74,12 +74,13 @@ Both content dirs are currently EMPTY and have no rendering routes in `src/pages
 - `trailingSlash: 'always'` enforced in `astro.config.mjs` — all internal links MUST end with `/`
 - Canonical URLs in `BaseHead.astro` strip query params via `new URL(Astro.url.pathname, Astro.site)`
 - Cloudflare Pages uses `.node-version` (`24`) and the `packageManager` field in `package.json`
-- **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`
+- **Tailwind integration**: Tailwind CSS v4 + DaisyUI v5 use `@tailwindcss/vite` and CSS-first config in `src/styles/global.css`; do not reintroduce `@astrojs/tailwind` or `tailwind.config.cjs`. `@tailwindcss/vite` must stay >= 4.3.2 — older versions crash on Vite 8's rolldown plugin bindings
 - `.npmrc` sets `shamefully-hoist=true` — required for Astro's transitive deps under pnpm; do not remove
 
 ## Dependency Update Policy
 
 - Renovate is the only automated dependency updater; do not add `.github/dependabot.yml`.
+- Renovate reads `renovate.json` from the DEFAULT branch (`main`) even though update PRs target `develop` — config changes take effect only after they are promoted to `main`.
 - All dependency updates automerge once the required dependency gate (build + smoke + VRT) succeeds; the gate is the review.
 - Major npm updates require dependency dashboard approval to create the PR, then automerge once the gate passes.
 - Keep the dependency gate aligned with production routes: `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`.
@@ -87,7 +88,8 @@ Both content dirs are currently EMPTY and have no rendering routes in `src/pages
 - The `playwright` group automerges when the gate passes. If VRT fails on a Playwright update: dispatch `VRT Update Baselines` with base=<renovate branch>, review and merge the baseline PR, then squash-merge the Renovate PR.
 - VRT baselines are generated ONLY by the `VRT Update Baselines` workflow on ubuntu-24.04; never run `playwright test --update-snapshots` locally.
 - Lighthouse CI is advisory for now (tighten thresholds later).
-- Claude advisory review (`renovate-review.yml`) is optional and skips green when `CLAUDE_CODE_OAUTH_TOKEN` is absent.
+- Claude advisory review (`renovate-review.yml`) is optional and skips green when `CLAUDE_CODE_OAUTH_TOKEN` is absent; `allowed_bots: renovate` is required because `claude-code-action@v1` rejects bot-initiated runs.
+- `lockFileMaintenance` PRs regenerate the whole lockfile and textually conflict with every other open dependency PR — merge them first, then rebase the rest (tick the rebase checkbox in the PR body). A `CONFLICTING` PR runs no `pull_request` checks at all.
 - Post-deploy `Production Smoke Check` runs on every push to `main` against the pages.dev project domain (the custom domain 403s datacenter IPs via bot protection); recovery = Cloudflare Pages Instant Rollback.
 - Known limitation: a Cloudflare build failure keeps serving the previous deployment; covered by Cloudflare's build-failure emails.
 
