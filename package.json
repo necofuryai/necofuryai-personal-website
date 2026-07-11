@@ -18,11 +18,11 @@
     "test:vrt": "playwright test"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/mdx": "^7.0.0",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.0",
     "@tailwindcss/vite": "^4.0.0",
-    "astro": "^6.0.0",
+    "astro": "^7.0.0",
     "daisyui": "^5.0.0",
     "dayjs": "^1.11.9",
     "remark-breaks": "^4.0.0",
