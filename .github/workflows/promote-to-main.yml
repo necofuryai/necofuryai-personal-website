@@ -2,7 +2,7 @@ name: Promote to Main
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # 15:00 JST Monday, after Renovate's morning wave
+    - cron: '0 6 * * 1' # 15:00 JST Monday
   workflow_dispatch:
 
 permissions:
