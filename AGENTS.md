@@ -28,8 +28,7 @@ This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when 
 - **Required checks**: `main` requires `Build and smoke check` + `Visual regression test` with strict=false (promotion PRs from a long-lived `develop` make strict=true deadlock); `develop` keeps strict=true
 - **Fork**: origin = `necofuryai/necofuryai-personal-website`, upstream = `manuelernestog/astrofy`
 - **PR creation**: Always use `gh pr create --repo necofuryai/necofuryai-personal-website` (default targets upstream)
-- **Dependency management**: Renovate (config in `renovate.json`), migrated from Dependabot
-- **Dependency PR base**: Renovate PRs target `develop`
+- **Dependency automation**: Automated dependency PR creation is disabled. Renovate is disabled in `renovate.json`; Dependabot version updates have no `.github/dependabot.yml`, and Dependabot security updates are disabled in the GitHub repository settings. Dependabot alerts remain enabled.
 - **Dependency gate**: Required checks are `Build and smoke check` (installs, builds, previews, smoke-checks primary routes) and `Visual regression test`; `Lighthouse CI (advisory)` never blocks
 - **Merge method**: Use squash merge for normal PRs (dependency, feature, docs); promotion PRs from `develop` to `main` are merged with merge commits (the repo allows both) because repeated squash promotions never advance the merge base and conflict on files like `pnpm-lock.yaml`
 
@@ -79,17 +78,13 @@ Both content dirs are currently EMPTY and have no rendering routes in `src/pages
 
 ## Dependency Update Policy
 
-- Renovate is the only automated dependency updater; do not add `.github/dependabot.yml`.
-- Renovate reads `renovate.json` from the DEFAULT branch (`main`) even though update PRs target `develop` — config changes take effect only after they are promoted to `main`.
-- All dependency updates automerge once the required dependency gate (build + smoke + VRT) succeeds; the gate is the review.
-- Major npm updates require dependency dashboard approval to create the PR, then automerge once the gate passes.
+- Do not create automated dependency update PRs for this retired site.
+- Keep `"enabled": false` in `renovate.json`; do not delete the file or re-enable its dormant update rules.
+- Do not add `.github/dependabot.yml`, and keep Dependabot security updates disabled in the GitHub repository settings. Dependabot alerts may remain enabled for vulnerability visibility.
+- Renovate reads `renovate.json` from the DEFAULT branch (`main`), so the disabled setting takes effect only after it is promoted to `main`. On the next Renovate run, the documented one-time cleanup closes its open PRs and issues and deletes its branches.
 - Keep the dependency gate aligned with production routes: `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`.
-- `minimumReleaseAge`: 7 days for npm patch/minor, 3 days for GitHub Actions; security fixes bypass schedule and release age via `vulnerabilityAlerts`/`osvVulnerabilityAlerts`.
-- The `playwright` group automerges when the gate passes. If VRT fails on a Playwright update: dispatch `VRT Update Baselines` with base=<renovate branch>, review and merge the baseline PR, then squash-merge the Renovate PR.
 - VRT baselines are generated ONLY by the `VRT Update Baselines` workflow on ubuntu-24.04; never run `playwright test --update-snapshots` locally.
 - Lighthouse CI is advisory for now (tighten thresholds later).
-- Claude advisory review (`renovate-review.yml`) is optional and skips green when `CLAUDE_CODE_OAUTH_TOKEN` is absent; `allowed_bots: renovate` is required because `claude-code-action@v1` rejects bot-initiated runs.
-- `lockFileMaintenance` PRs regenerate the whole lockfile and textually conflict with every other open dependency PR — merge them first, then rebase the rest (tick the rebase checkbox in the PR body). A `CONFLICTING` PR runs no `pull_request` checks at all.
 - Post-deploy `Production Smoke Check` runs on every push to `main` against the pages.dev project domain (the custom domain 403s datacenter IPs via bot protection); recovery = Cloudflare Pages Instant Rollback.
 - Known limitation: a Cloudflare build failure keeps serving the previous deployment; covered by Cloudflare's build-failure emails.
 
