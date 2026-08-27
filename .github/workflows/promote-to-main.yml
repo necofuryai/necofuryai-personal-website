@@ -1,8 +1,6 @@
 name: Promote to Main
 
 on:
-  schedule:
-    - cron: '0 6 * * 1' # 15:00 JST Monday
   workflow_dispatch:
 
 permissions:
@@ -25,7 +23,7 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
