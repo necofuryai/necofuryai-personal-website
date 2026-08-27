@@ -23,12 +23,12 @@ This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when 
 ## Git Workflow
 
 - **Branching**: `develop` → PR to `main` (Cloudflare Pages deploys from `main`)
-- **Release automation**: The `Promote to Main` workflow (Mondays 15:00 JST cron + `workflow_dispatch`) opens a merge-commit promotion PR from `develop` to `main`, authored by the `necofuryai-release-bot` GitHub App, and enables auto-merge
+- **Release automation**: Automatic promotion is paused. The manual-only `Promote to Main` workflow (`workflow_dispatch`) opens a merge-commit promotion PR from `develop` to `main`, authored by the `necofuryai-release-bot` GitHub App, and enables auto-merge.
 - **Drift check**: Promotion runs a tree-based drift check and fails loudly if `main` contains content not sourced from `develop`
 - **Required checks**: `main` requires `Build and smoke check` + `Visual regression test` with strict=false (promotion PRs from a long-lived `develop` make strict=true deadlock); `develop` keeps strict=true
 - **Fork**: origin = `necofuryai/necofuryai-personal-website`, upstream = `manuelernestog/astrofy`
 - **PR creation**: Always use `gh pr create --repo necofuryai/necofuryai-personal-website` (default targets upstream)
-- **Dependency automation**: Automated dependency PR creation is disabled. Renovate is disabled in `renovate.json`; Dependabot version updates have no `.github/dependabot.yml`, and Dependabot security updates are disabled in the GitHub repository settings. Dependabot alerts remain enabled.
+- **Dependency automation**: Automated dependency PR creation is disabled. Renovate is disabled in `renovate.json`; Dependabot version updates have no `.github/dependabot.yml`, and Dependabot security updates are disabled in the GitHub repository settings. Dependabot alerts remain enabled only as passive visibility while the residual Pages deployment and rebuild path still exist.
 - **Dependency gate**: Required checks are `Build and smoke check` (installs, builds, previews, smoke-checks primary routes) and `Visual regression test`; `Lighthouse CI (advisory)` never blocks
 - **Merge method**: Use squash merge for normal PRs (dependency, feature, docs); promotion PRs from `develop` to `main` are merged with merge commits (the repo allows both) because repeated squash promotions never advance the merge base and conflict on files like `pnpm-lock.yaml`
 
@@ -80,8 +80,9 @@ Both content dirs are currently EMPTY and have no rendering routes in `src/pages
 
 - Do not create automated dependency update PRs for this retired site.
 - Keep `"enabled": false` in `renovate.json`; do not delete the file or re-enable its dormant update rules.
-- Do not add `.github/dependabot.yml`, and keep Dependabot security updates disabled in the GitHub repository settings. Dependabot alerts may remain enabled for vulnerability visibility.
-- Renovate reads `renovate.json` from the DEFAULT branch (`main`), so the disabled setting takes effect only after it is promoted to `main`. On the next Renovate run, the documented one-time cleanup closes its open PRs and issues and deletes its branches.
+- Do not add `.github/dependabot.yml`, and keep Dependabot security updates disabled in the GitHub repository settings.
+- Keep Dependabot alerts enabled as passive vulnerability visibility while the residual Pages deployment and rebuild path exist; alerts must not create remediation PRs automatically.
+- Keep automatic `develop` to `main` promotion paused. Run `Promote to Main` manually only for an explicitly requested maintenance change.
 - Keep the dependency gate aligned with production routes: `/`, `/cv/`, `/projects/`, `/hobbies/`, and `/pr/`.
 - VRT baselines are generated ONLY by the `VRT Update Baselines` workflow on ubuntu-24.04; never run `playwright test --update-snapshots` locally.
 - Lighthouse CI is advisory for now (tighten thresholds later).
