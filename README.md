@@ -1,5 +1,8 @@
 # 🐱 NecoFuryAI Personal Website
 
+> [!IMPORTANT]
+> The current website is maintained in the [`necofuryai.dev`](https://github.com/necofuryai/necofuryai.dev) repository and is available at [https://necofuryai.dev/](https://necofuryai.dev/).
+
 [![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-FF5D01?style=flat-square&logo=astro)](https://astro.build)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
